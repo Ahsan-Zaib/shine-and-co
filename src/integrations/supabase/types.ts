@@ -14,7 +14,96 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      booking_requests: {
+        Row: {
+          addons: string[]
+          address: string | null
+          bathrooms: number | null
+          bedrooms: number | null
+          created_at: string
+          email: string
+          estimated_price: number | null
+          frequency: string
+          id: string
+          name: string
+          notes: string | null
+          phone: string
+          preferred_date: string | null
+          preferred_time: string | null
+          property_type: string | null
+          request_type: string
+          service: string
+        }
+        Insert: {
+          addons?: string[]
+          address?: string | null
+          bathrooms?: number | null
+          bedrooms?: number | null
+          created_at?: string
+          email: string
+          estimated_price?: number | null
+          frequency?: string
+          id?: string
+          name: string
+          notes?: string | null
+          phone: string
+          preferred_date?: string | null
+          preferred_time?: string | null
+          property_type?: string | null
+          request_type: string
+          service: string
+        }
+        Update: {
+          addons?: string[]
+          address?: string | null
+          bathrooms?: number | null
+          bedrooms?: number | null
+          created_at?: string
+          email?: string
+          estimated_price?: number | null
+          frequency?: string
+          id?: string
+          name?: string
+          notes?: string | null
+          phone?: string
+          preferred_date?: string | null
+          preferred_time?: string | null
+          property_type?: string | null
+          request_type?: string
+          service?: string
+        }
+        Relationships: []
+      }
+      contact_submissions: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          message: string
+          name: string
+          phone: string | null
+          service: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          message: string
+          name: string
+          phone?: string | null
+          service?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          message?: string
+          name?: string
+          phone?: string | null
+          service?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
