@@ -17,7 +17,7 @@ export const Route = createFileRoute("/before-after")({
 });
 
 function Page() {
-  const [active, setActive] = useState(SERVICES[0].slug);
+  const [active, setActive] = useState<string>("regular");
   const s = SERVICES.find((x) => x.slug === active)!;
   return (
     <>

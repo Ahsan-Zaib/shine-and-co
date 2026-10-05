@@ -71,7 +71,7 @@ function ContactPage() {
                 </select></div>
               <div className="sm:col-span-2"><Label>Message</Label>
                 <Textarea className="mt-2 rounded-xl" rows={5} maxLength={1000} value={form.message} onChange={set("message")} />
-                {errors.message && <p className="mt-1 text-sm text-destructive">{errors.message}</p>}</div>
+                {errors["message"] && <p className="mt-1 text-sm text-destructive">{errors["message"]}</p>}</div>
               <Button type="submit" variant="hero" size="xl" className="sm:col-span-2" disabled={sending}>{sending ? "Sending…" : "Send Request"}</Button>
             </form>
           )}

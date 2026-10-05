@@ -21,7 +21,7 @@ const schema = z.object({
 const TIMES = ["8:00 AM", "10:00 AM", "12:00 PM", "2:00 PM", "4:00 PM"];
 const field = "h-12 w-full rounded-xl border border-input bg-card px-3";
 
-export function BookingForm({ mode, initialFrequency, initialService }: { mode: "booking" | "quote"; initialFrequency?: Frequency; initialService?: string }) {
+export function BookingForm({ mode, initialFrequency, initialService }: { mode: "booking" | "quote"; initialFrequency?: Frequency | undefined; initialService?: string | undefined }) {
   const [service, setService] = useState(initialService ?? "regular");
   const [propertyType, setPropertyType] = useState("Apartment");
   const [bedrooms, setBedrooms] = useState(2);
@@ -29,7 +29,7 @@ export function BookingForm({ mode, initialFrequency, initialService }: { mode: 
   const [frequency, setFrequency] = useState<Frequency>(initialFrequency ?? "biweekly");
   const [addons, setAddons] = useState<string[]>([]);
   const [date, setDate] = useState("");
-  const [time, setTime] = useState(TIMES[1]);
+  const [time, setTime] = useState<string>("10:00 AM");
   const [form, setForm] = useState({ name: "", email: "", phone: "", address: "", notes: "" });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
@@ -136,7 +136,7 @@ export function BookingForm({ mode, initialFrequency, initialService }: { mode: 
         <div className="grid gap-4 sm:grid-cols-2">
           <div><Label>Preferred date{mode === "booking" && " *"}</Label>
             <input type="date" className={`${field} mt-2`} value={date} onChange={(e) => setDate(e.target.value)} />
-            {errors.date && <p className="mt-1 text-sm text-destructive">{errors.date}</p>}</div>
+            {errors["date"] && <p className="mt-1 text-sm text-destructive">{errors["date"]}</p>}</div>
           <div><Label>Preferred time</Label>
             <select className={`${field} mt-2`} value={time} onChange={(e) => setTime(e.target.value)}>
               {TIMES.map((t) => <option key={t}>{t}</option>)}
