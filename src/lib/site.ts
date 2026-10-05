@@ -134,7 +134,7 @@ export const REVIEWS = [
   { name: "Elena K.", text: "Transparent price, friendly cleaners, and they remember how I like things. Switched to weekly.", service: "Regular Cleaning" },
 ];
 
-export const FAQS = [
+export const FAQS: [string, string][] = [
   ["What does regular cleaning include?", "Dusting, vacuuming and mopping all floors, kitchen counters and appliance exteriors, full bathroom cleaning, making beds and emptying trash."],
   ["Do you bring cleaning products?", "Yes. Our team arrives with professional equipment and eco-friendly products. If you prefer we use your own, just let us know."],
   ["How much does cleaning cost?", "Regular cleaning starts from $99. Your exact price depends on home size, service and add-ons — use our instant quote tool for an estimate."],
