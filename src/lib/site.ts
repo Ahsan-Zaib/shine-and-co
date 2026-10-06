@@ -3,6 +3,7 @@ import beforeLiving from "@/assets/before-living.jpg";
 import afterBath from "@/assets/after-bath.jpg";
 import beforeBath from "@/assets/before-bath.jpg";
 import office from "@/assets/office.jpg";
+import beforeOffice from "@/assets/before-office.jpg";
 import cleaner from "@/assets/cleaner-kitchen.jpg";
 
 export const BUSINESS = {
@@ -23,7 +24,7 @@ export const BUSINESS = {
 export const whatsappLink = (msg = "Hi, I'd like to get a quote for cleaning service.") =>
   `https://wa.me/${BUSINESS.whatsapp}?text=${encodeURIComponent(msg)}`;
 
-export const IMAGES = { afterLiving, beforeLiving, afterBath, beforeBath, office, cleaner };
+export const IMAGES = { afterLiving, beforeLiving, afterBath, beforeBath, office, beforeOffice, cleaner };
 
 export type Service = {
   slug: string;
@@ -64,7 +65,7 @@ export const SERVICES: Service[] = [
     description: "Flexible after-hours cleaning for offices and studios, tailored to your floor plan and schedule.",
     included: ["Desks & shared surfaces sanitized", "Kitchenette & break room", "Restrooms restocked", "Floors vacuumed & mopped", "Trash & recycling"],
     price: 149,
-    before: beforeLiving,
+    before: beforeOffice,
     after: office,
   },
   {
