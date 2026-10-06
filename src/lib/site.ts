@@ -3,6 +3,7 @@ import beforeLiving from "@/assets/before-living.jpg";
 import afterBath from "@/assets/after-bath.jpg";
 import beforeBath from "@/assets/before-bath.jpg";
 import office from "@/assets/office.jpg";
+import beforeOffice from "@/assets/before-office.jpg";
 import cleaner from "@/assets/cleaner-kitchen.jpg";
 
 export const BUSINESS = {
