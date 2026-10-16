@@ -19,22 +19,56 @@ export const Route = createFileRoute("/")({
 function Index() {
   return (
     <>
-      <section className="container-x grid items-center gap-12 pt-12 pb-20 lg:grid-cols-2 lg:pt-20">
-        <div className="animate-rise">
-          <p className="eyebrow">Home · Office · Move cleaning</p>
-          <h1 className="mt-4 text-5xl font-semibold leading-[1.05] md:text-7xl">A Cleaner Space.<br /><em className="text-accent">A Better Life.</em></h1>
-          <p className="mt-6 max-w-lg text-lg text-muted-foreground">Professional cleaning services for homes, offices, moves, and everything in between.</p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Button asChild variant="hero" size="xl"><Link to="/book">Book a Cleaning</Link></Button>
-            <Button asChild variant="soft" size="xl"><Link to="/quote">Get a Free Quote</Link></Button>
+      <section className="relative overflow-hidden bg-hero-mesh">
+        <div className="pointer-events-none absolute -left-24 top-10 h-80 w-80 rounded-full bg-accent/20 blur-3xl animate-blob" />
+        <div className="pointer-events-none absolute -right-24 bottom-0 h-96 w-96 rounded-full bg-mint blur-3xl animate-blob [animation-delay:-6s]" />
+        <div className="container-x relative grid items-center gap-12 pt-12 pb-20 lg:grid-cols-2 lg:pt-20">
+          <div className="animate-rise">
+            <p className="inline-flex items-center gap-2 rounded-full border border-accent/30 bg-card/70 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.18em] text-accent backdrop-blur">
+              <span className="h-2 w-2 animate-pulse rounded-full bg-accent" />Home · Office · Move cleaning
+            </p>
+            <h1 className="mt-5 text-5xl font-semibold leading-[1.02] md:text-7xl">A Cleaner Space.<br /><em className="text-gradient">A Better Life.</em></h1>
+            <p className="mt-6 max-w-lg text-lg text-muted-foreground">Professional cleaning services for homes, offices, moves, and everything in between.</p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Button asChild variant="hero" size="xl" className="transition-transform hover:-translate-y-0.5"><Link to="/book">Book a Cleaning</Link></Button>
+              <Button asChild variant="soft" size="xl" className="transition-transform hover:-translate-y-0.5"><Link to="/quote">Get a Free Quote</Link></Button>
+            </div>
+            <div className="mt-8"><RatingBadge /></div>
+            <div className="mt-10 grid max-w-md grid-cols-3 gap-4">
+              {[["500+", "Happy clients"], ["4.9★", "Avg rating"], ["100%", "Guaranteed"]].map(([n, l]) => (
+                <div key={l} className="rounded-2xl border border-border/70 bg-card/70 p-3 text-center backdrop-blur">
+                  <p className="font-display text-2xl font-semibold">{n}</p>
+                  <p className="text-xs text-muted-foreground">{l}</p>
+                </div>
+              ))}
+            </div>
           </div>
-          <div className="mt-8"><RatingBadge /></div>
-        </div>
-        <div className="animate-rise [animation-delay:150ms]">
-          <BeforeAfter before={IMAGES.beforeLiving} after={IMAGES.afterLiving} alt="Living room" />
-          <p className="mt-3 text-center text-sm text-muted-foreground">Drag to see the difference</p>
+          <div className="relative animate-rise [animation-delay:150ms]">
+            <div className="rounded-[2rem] bg-card/60 p-3 shadow-lift backdrop-blur">
+              <BeforeAfter before={IMAGES.beforeLiving} after={IMAGES.afterLiving} alt="Living room" priority />
+            </div>
+            <div className="absolute -left-4 top-8 hidden animate-float rounded-2xl border border-border bg-card px-4 py-3 shadow-lift sm:block">
+              <p className="text-xs text-muted-foreground">Next available</p>
+              <p className="font-semibold">Tomorrow, 9:00 AM</p>
+            </div>
+            <div className="absolute -right-3 bottom-12 hidden animate-float rounded-2xl border border-border bg-card px-4 py-3 shadow-lift [animation-delay:-3s] sm:block">
+              <p className="text-xs text-muted-foreground">Eco-friendly products</p>
+              <p className="font-semibold text-accent">Safe for kids & pets</p>
+            </div>
+            <p className="mt-3 text-center text-sm text-muted-foreground">Drag to see the difference</p>
+          </div>
         </div>
       </section>
+
+      <div className="overflow-hidden border-y border-border bg-primary py-4 text-primary-foreground">
+        <div className="flex w-max animate-marquee gap-12 whitespace-nowrap font-display text-lg">
+          {Array.from({ length: 2 }).flatMap((_, k) =>
+            ["Regular Cleaning", "Deep Cleaning", "Office Cleaning", "Move-In / Move-Out", "After-Party Cleanup", "Background-checked staff", "Satisfaction guaranteed"].map((t) => (
+              <span key={`${k}-${t}`} className="flex items-center gap-12">{t}<span className="text-accent">✦</span></span>
+            )),
+          )}
+        </div>
+      </div>
 
       <section className="container-x py-16">
         <SectionHead eyebrow="Our services" title="Every kind of clean, done right" />

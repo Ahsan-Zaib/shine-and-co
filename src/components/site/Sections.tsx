@@ -9,6 +9,7 @@ export function SectionHead({ eyebrow, title, sub, center = true }: { eyebrow: s
     <div className={center ? "mx-auto max-w-2xl text-center" : "max-w-2xl"}>
       <p className="eyebrow">{eyebrow}</p>
       <h2 className="mt-3 text-4xl font-semibold md:text-5xl">{title}</h2>
+      <div className={`mt-5 h-1 w-16 rounded-full bg-accent ${center ? "mx-auto" : ""}`} />
       {sub && <p className="mt-4 text-lg text-muted-foreground">{sub}</p>}
     </div>
   );
@@ -16,8 +17,10 @@ export function SectionHead({ eyebrow, title, sub, center = true }: { eyebrow: s
 
 export function PageHero({ eyebrow, title, sub }: { eyebrow: string; title: string; sub: string }) {
   return (
-    <section className="bg-mint/50">
-      <div className="container-x py-20 text-center animate-rise">
+    <section className="relative overflow-hidden bg-hero-mesh">
+      <div className="pointer-events-none absolute -left-20 -top-20 h-72 w-72 rounded-full bg-accent/20 blur-3xl animate-blob" />
+      <div className="pointer-events-none absolute -right-20 bottom-0 h-72 w-72 rounded-full bg-mint blur-3xl animate-blob [animation-delay:-5s]" />
+      <div className="container-x relative py-24 text-center animate-rise">
         <p className="eyebrow">{eyebrow}</p>
         <h1 className="mx-auto mt-3 max-w-3xl text-5xl font-semibold md:text-6xl">{title}</h1>
         <p className="mx-auto mt-5 max-w-xl text-lg text-muted-foreground">{sub}</p>
@@ -44,7 +47,7 @@ export function ServiceCards({ limit }: { limit?: number }) {
   return (
     <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
       {SERVICES.slice(0, limit).map((s) => (
-        <Link key={s.slug} to="/services" hash={s.slug} className="group overflow-hidden rounded-3xl border border-border bg-card shadow-soft transition-all hover:-translate-y-1 hover:shadow-lift">
+        <Link key={s.slug} to="/services" hash={s.slug} className="group card-glow overflow-hidden rounded-3xl border border-border bg-card shadow-soft">
           <div className="aspect-[16/10] overflow-hidden"><img src={s.after} alt={s.name} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" /></div>
           <div className="p-6">
             <div className="flex items-baseline justify-between">
@@ -75,8 +78,8 @@ export function WhyUs() {
   return (
     <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
       {WHY.map(({ icon: I, t, d }) => (
-        <div key={t} className="rounded-3xl border border-border bg-card p-6 shadow-soft">
-          <span className="grid h-11 w-11 place-items-center rounded-2xl bg-mint text-accent"><I className="h-5 w-5" /></span>
+        <div key={t} className="group card-glow rounded-3xl border border-border bg-card p-6 shadow-soft">
+          <span className="grid h-11 w-11 place-items-center rounded-2xl bg-mint text-accent transition-all duration-500 group-hover:rotate-6 group-hover:scale-110 group-hover:bg-accent group-hover:text-accent-foreground"><I className="h-5 w-5" /></span>
           <h3 className="mt-4 font-sans text-lg font-bold tracking-normal">{t}</h3>
           <p className="mt-1 text-sm text-muted-foreground">{d}</p>
         </div>
@@ -95,8 +98,8 @@ export function HowItWorks() {
   return (
     <div className="grid gap-6 md:grid-cols-4">
       {steps.map(([t, d], i) => (
-        <div key={t} className="relative">
-          <span className="font-display text-6xl font-semibold text-accent/25">0{i + 1}</span>
+        <div key={t} className="group card-glow relative rounded-3xl border border-border bg-card p-6 shadow-soft">
+          <span className="font-display text-6xl font-semibold text-accent/25 transition-colors duration-500 group-hover:text-accent">0{i + 1}</span>
           <h3 className="mt-2 font-sans text-lg font-bold tracking-normal">{t}</h3>
           <p className="mt-1 text-muted-foreground">{d}</p>
         </div>
@@ -109,7 +112,7 @@ export function Reviews({ limit }: { limit?: number }) {
   return (
     <div className="grid gap-5 md:grid-cols-3">
       {REVIEWS.slice(0, limit).map((r) => (
-        <figure key={r.name} className="flex flex-col rounded-3xl border border-border bg-card p-7 shadow-soft">
+        <figure key={r.name} className="card-glow flex flex-col rounded-3xl border border-border bg-card p-7 shadow-soft">
           <Stars />
           <blockquote className="mt-4 flex-1 text-lg leading-relaxed">“{r.text}”</blockquote>
           <figcaption className="mt-6 flex items-center gap-3">
@@ -126,7 +129,7 @@ export function Plans() {
   return (
     <div className="grid gap-5 md:grid-cols-4">
       {PLANS.map((p) => (
-        <div key={p.id} className={`relative rounded-3xl border p-7 shadow-soft ${"popular" in p && p.popular ? "border-accent bg-primary text-primary-foreground shadow-lift md:-translate-y-3" : "border-border bg-card"}`}>
+        <div key={p.id} className={`card-glow relative rounded-3xl border p-7 shadow-soft ${"popular" in p && p.popular ? "border-accent bg-primary text-primary-foreground shadow-lift md:-translate-y-3" : "border-border bg-card"}`}>
           {"popular" in p && p.popular && <span className="absolute -top-3 left-7 rounded-full bg-accent px-3 py-1 text-xs font-bold text-accent-foreground">Most popular</span>}
           <h3 className="text-2xl font-semibold">{p.name}</h3>
           <p className={`mt-1 text-sm ${"popular" in p && p.popular ? "text-primary-foreground/70" : "text-muted-foreground"}`}>{p.tag}</p>
@@ -163,7 +166,8 @@ export function FinalCta() {
   return (
     <section className="container-x mt-24">
       <div className="relative overflow-hidden rounded-[2.5rem] bg-primary px-8 py-16 text-center text-primary-foreground md:px-16">
-        <div className="absolute -right-20 -top-20 h-72 w-72 rounded-full bg-accent/30 blur-3xl" />
+        <div className="absolute -right-20 -top-20 h-72 w-72 rounded-full bg-accent/30 blur-3xl animate-blob" />
+        <div className="absolute -bottom-24 -left-16 h-72 w-72 rounded-full bg-accent/20 blur-3xl animate-blob [animation-delay:-7s]" />
         <h2 className="relative text-4xl font-semibold md:text-5xl">Come home to clean, every week.</h2>
         <p className="relative mx-auto mt-4 max-w-xl text-primary-foreground/70">Save up to 20% with a recurring plan. Skip or pause any time.</p>
         <div className="relative mt-8 flex flex-wrap justify-center gap-3">
