@@ -45,7 +45,7 @@ function Index() {
           </div>
           <div className="relative animate-rise [animation-delay:150ms]">
             <div className="rounded-[2rem] bg-card/60 p-3 shadow-lift backdrop-blur">
-              <BeforeAfter before={IMAGES.beforeLiving} after={IMAGES.afterLiving} alt="Living room" priority />
+              <BeforeAfter before={IMAGES.beforeLiving} after={IMAGES.afterLiving} alt="Living room" />
             </div>
             <div className="absolute -left-4 top-8 hidden animate-float rounded-2xl border border-border bg-card px-4 py-3 shadow-lift sm:block">
               <p className="text-xs text-muted-foreground">Next available</p>
