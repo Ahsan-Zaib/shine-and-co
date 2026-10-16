@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Menu, X, Phone, Mail, MessageCircle, Sparkles, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BUSINESS, whatsappLink } from "@/lib/site";
@@ -17,7 +17,7 @@ const NAV = [
 export function Logo() {
   return (
     <Link to="/" className="flex items-center gap-2 font-display text-xl font-semibold">
-      <span className="grid h-9 w-9 place-items-center rounded-xl bg-accent text-accent-foreground"><Sparkles className="h-5 w-5" /></span>
+      <span className="grid h-9 w-9 place-items-center rounded-xl bg-accent text-accent-foreground shadow-glow transition-transform duration-500 hover:rotate-12"><Sparkles className="h-5 w-5" /></span>
       {BUSINESS.name}
     </Link>
   );
@@ -25,13 +25,20 @@ export function Logo() {
 
 export function Header() {
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const on = () => setScrolled(window.scrollY > 12);
+    on();
+    window.addEventListener("scroll", on, { passive: true });
+    return () => window.removeEventListener("scroll", on);
+  }, []);
   return (
-    <header className="sticky top-0 z-40 border-b border-border/60 bg-background/85 backdrop-blur-lg">
-      <div className="container-x flex h-18 items-center justify-between py-3">
+    <header className={`sticky top-0 z-40 border-b transition-all duration-300 ${scrolled ? "border-border/60 bg-background/80 shadow-soft backdrop-blur-xl" : "border-transparent bg-background/40 backdrop-blur-sm"}`}>
+      <div className={`container-x flex items-center justify-between transition-all duration-300 ${scrolled ? "py-2" : "py-4"}`}>
         <Logo />
         <nav className="hidden items-center gap-6 lg:flex">
           {NAV.map((n) => (
-            <Link key={n.to} to={n.to} className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground" activeProps={{ className: "text-foreground" }}>
+            <Link key={n.to} to={n.to} className="nav-link text-sm font-medium text-muted-foreground transition-colors hover:text-foreground" activeProps={{ className: "text-foreground" }}>
               {n.label}
             </Link>
           ))}
