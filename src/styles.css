@@ -85,3 +85,53 @@
 
 @keyframes rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
 @utility animate-rise { animation: rise 0.7s cubic-bezier(.2,.7,.2,1) both; }
+
+/* ---------- Motion & atmosphere ---------- */
+:root {
+  --gradient-hero: radial-gradient(60% 60% at 15% 20%, oklch(0.93 0.07 170 / 0.9), transparent 70%),
+    radial-gradient(50% 50% at 85% 10%, oklch(0.9 0.06 220 / 0.7), transparent 70%),
+    radial-gradient(40% 50% at 70% 90%, oklch(0.94 0.06 90 / 0.6), transparent 70%);
+  --gradient-accent: linear-gradient(120deg, var(--accent), oklch(0.55 0.13 220));
+}
+
+@keyframes page-in { from { opacity: 0; transform: translateY(10px); filter: blur(4px); } to { opacity: 1; transform: none; filter: none; } }
+@utility animate-page { animation: page-in 0.6s cubic-bezier(.2,.7,.2,1) both; }
+
+@keyframes float-y { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+@utility animate-float { animation: float-y 6s ease-in-out infinite; }
+
+@keyframes blob { 0%,100% { transform: translate(0,0) scale(1); } 33% { transform: translate(30px,-40px) scale(1.1); } 66% { transform: translate(-20px,20px) scale(0.95); } }
+@utility animate-blob { animation: blob 14s ease-in-out infinite; }
+
+@keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@utility animate-marquee { animation: marquee 30s linear infinite; }
+
+@keyframes shimmer { from { background-position: 0% 50%; } to { background-position: 200% 50%; } }
+@utility text-gradient {
+  background: linear-gradient(90deg, var(--accent), oklch(0.55 0.13 220), var(--accent));
+  background-size: 200% auto;
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  animation: shimmer 6s linear infinite;
+}
+
+@utility bg-hero-mesh { background-image: var(--gradient-hero); }
+
+@utility card-glow {
+  transition: transform .4s cubic-bezier(.2,.7,.2,1), box-shadow .4s, border-color .4s;
+  &:hover { transform: translateY(-6px); box-shadow: var(--shadow-lift); border-color: color-mix(in oklab, var(--accent) 45%, transparent); }
+}
+
+@utility nav-link {
+  position: relative;
+  &::after { content: ""; position: absolute; left: 0; right: 0; bottom: -6px; height: 2px; border-radius: 2px; background: var(--accent); transform: scaleX(0); transform-origin: left; transition: transform .3s; }
+  &:hover::after, &[data-status="active"]::after { transform: scaleX(1); }
+}
+
+/* Scroll reveal (class added by JS only, so content is visible without JS) */
+.reveal { opacity: 0; transform: translateY(28px); transition: opacity .8s cubic-bezier(.2,.7,.2,1), transform .8s cubic-bezier(.2,.7,.2,1); }
+.reveal.is-visible { opacity: 1; transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .reveal { opacity: 1; transform: none; }
+}
