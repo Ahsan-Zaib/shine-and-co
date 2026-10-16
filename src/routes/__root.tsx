@@ -4,6 +4,7 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
   type ErrorComponentProps,
@@ -114,13 +115,50 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
+function useScrollReveal(key: string) {
+  useEffect(() => {
+    if (typeof IntersectionObserver === "undefined") return;
+    const targets = document.querySelectorAll<HTMLElement>(
+      "main section:not(:first-child), main [data-reveal], main .grid > *",
+    );
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            e.target.classList.add("is-visible");
+            io.unobserve(e.target);
+          }
+        });
+      },
+      { threshold: 0.12, rootMargin: "0px 0px -40px 0px" },
+    );
+    targets.forEach((el) => {
+      const rect = el.getBoundingClientRect();
+      if (rect.top < window.innerHeight) return; // already on screen: leave visible
+      const parent = el.parentElement;
+      if (parent?.classList.contains("grid")) {
+        const idx = Array.from(parent.children).indexOf(el);
+        el.style.transitionDelay = `${Math.min(idx, 6) * 80}ms`;
+      }
+      el.classList.add("reveal");
+      io.observe(el);
+    });
+    return () => io.disconnect();
+  }, [key]);
+}
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  useScrollReveal(pathname);
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
+  }, [pathname]);
 
   return (
     <QueryClientProvider client={queryClient}>
       <Header />
-      <main>
+      <main key={pathname} className="animate-page">
         {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
         <Outlet />
       </main>
