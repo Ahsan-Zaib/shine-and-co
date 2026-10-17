@@ -47,15 +47,20 @@ export function Header() {
           <Button asChild variant="ghost" size="sm"><Link to="/quote">Free Quote</Link></Button>
           <Button asChild variant="hero"><Link to="/book">Book Now</Link></Button>
         </div>
-        <button className="lg:hidden" onClick={() => setOpen(!open)} aria-label="Menu">{open ? <X /> : <Menu />}</button>
+        <button key={open ? "o" : "c"} className="menu-scrub relative grid h-10 w-10 place-items-center rounded-xl lg:hidden" onClick={() => setOpen(!open)} aria-label="Menu" aria-expanded={open}>
+          {open ? <X /> : <Menu />}
+          <Sparkles className="menu-spark pointer-events-none absolute -right-1 -top-1 h-4 w-4 text-accent" />
+        </button>
       </div>
       {open && (
-        <div className="border-t border-border bg-background lg:hidden">
+        <div className="menu-wipe relative overflow-hidden border-t border-border bg-background lg:hidden">
+          <span aria-hidden className="menu-squeegee pointer-events-none absolute inset-y-0 w-24" />
           <nav className="container-x flex flex-col gap-1 py-4">
-            {NAV.map((n) => (
-              <Link key={n.to} to={n.to} onClick={() => setOpen(false)} className="rounded-lg px-3 py-2 font-medium hover:bg-muted">{n.label}</Link>
+            {[...NAV, { to: "/quote", label: "Get a Free Quote" } as const].map((n, i) => (
+              <Link key={n.to} to={n.to} onClick={() => setOpen(false)} style={{ animationDelay: `${120 + i * 50}ms` }} className="menu-item flex items-center gap-2 rounded-lg px-3 py-2 font-medium hover:bg-muted">
+                {n.label}
+              </Link>
             ))}
-            <Link to="/quote" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2 font-medium hover:bg-muted">Get a Free Quote</Link>
           </nav>
         </div>
       )}
