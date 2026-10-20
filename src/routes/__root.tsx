@@ -132,16 +132,40 @@ function useScrollReveal(key: string) {
       },
       { threshold: 0.12, rootMargin: "0px 0px -40px 0px" },
     );
+    const below = (el: Element) => el.getBoundingClientRect().top >= window.innerHeight;
     targets.forEach((el) => {
-      const rect = el.getBoundingClientRect();
-      if (rect.top < window.innerHeight) return; // already on screen: leave visible
+      if (!below(el)) return; // already on screen: leave visible
       const parent = el.parentElement;
       if (parent?.classList.contains("grid")) {
         const idx = Array.from(parent.children).indexOf(el);
-        el.style.transitionDelay = `${Math.min(idx, 6) * 80}ms`;
+        el.style.transitionDelay = `${Math.min(idx, 6) * 110}ms`;
       }
       el.classList.add("reveal");
       io.observe(el);
+    });
+    // Word-by-word headings
+    document.querySelectorAll<HTMLElement>("main section:not(:first-child) h2").forEach((h) => {
+      if (!below(h) || h.dataset.split) return;
+      h.dataset.split = "1";
+      const words = (h.textContent ?? "").split(/\s+/).filter(Boolean);
+      h.textContent = "";
+      words.forEach((w, i) => {
+        const s = document.createElement("span");
+        s.className = "rw";
+        s.textContent = w;
+        s.style.transitionDelay = `${150 + i * 70}ms`;
+        h.appendChild(s);
+        h.appendChild(document.createTextNode(" "));
+      });
+      h.classList.add("reveal-words");
+      io.observe(h);
+    });
+    // Image unveil
+    document.querySelectorAll<HTMLElement>("main img").forEach((img) => {
+      const box = img.parentElement;
+      if (!box || !below(box) || box.classList.contains("reveal-img")) return;
+      box.classList.add("reveal-img");
+      io.observe(box);
     });
     return () => io.disconnect();
   }, [key]);
