@@ -167,4 +167,4 @@
 .menu-item { animation: item-shine .45s cubic-bezier(.2,.7,.2,1) both; }
 
 /* Live 3D tilt on cards (set by JS) */
-.tilt3d { transition: transform .25s ease-out !important; transform-style: preserve-3d; }
+.tilt3d { transition: transform .25s ease-out !important; transition-delay: 0s !important; transform-style: preserve-3d; }
