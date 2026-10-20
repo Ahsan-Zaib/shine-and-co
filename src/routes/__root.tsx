@@ -140,7 +140,18 @@ function useScrollReveal(key: string) {
         const idx = Array.from(parent.children).indexOf(el);
         el.style.transitionDelay = `${Math.min(idx, 6) * 110}ms`;
       }
+      const variants = ["", "rv-left", "rv-depth", "rv-right", "rv-flip"];
+      const sec = el.closest("section");
+      const secIdx = sec ? Array.from(document.querySelectorAll("main section")).indexOf(sec) : 0;
+      let v = variants[secIdx % variants.length] ?? "";
+      if (parent?.classList.contains("grid")) {
+        const idx = Array.from(parent.children).indexOf(el);
+        // alternate within grids: two-column blocks come from opposite sides
+        if (parent.children.length === 2) v = idx === 0 ? "rv-left" : "rv-right";
+        else if (secIdx % 2) v = idx % 2 ? "rv-flip" : "";
+      }
       el.classList.add("reveal");
+      if (v) el.classList.add(v);
       io.observe(el);
     });
     // Word-by-word headings
