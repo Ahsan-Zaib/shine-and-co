@@ -145,8 +145,8 @@ function useScrollReveal(key: string) {
     });
     // Word-by-word headings
     document.querySelectorAll<HTMLElement>("main section:not(:first-child) h2").forEach((h) => {
-      if (!below(h) || h.dataset.split) return;
-      h.dataset.split = "1";
+      if (!below(h) || h.dataset["split"]) return;
+      h.dataset["split"] = "1";
       const words = (h.textContent ?? "").split(/\s+/).filter(Boolean);
       h.textContent = "";
       words.forEach((w, i) => {
