@@ -10,6 +10,7 @@ import {
   type ErrorComponentProps,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
+import { animate, inView, scroll } from "framer-motion";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
@@ -117,86 +118,83 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function useScrollReveal(key: string) {
   useEffect(() => {
-    if (typeof IntersectionObserver === "undefined") return;
-    const targets = document.querySelectorAll<HTMLElement>(
-      "main section:not(:first-child), main [data-reveal], main .grid > *",
-    );
-    const io = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => {
-          if (e.isIntersecting) {
-            e.target.classList.add("is-visible");
-            io.unobserve(e.target);
-          }
-        });
-      },
-      { threshold: 0.12, rootMargin: "0px 0px -40px 0px" },
-    );
-    const below = (el: Element) => el.getBoundingClientRect().top >= window.innerHeight;
-    targets.forEach((el) => {
-      if (!below(el)) return; // already on screen: leave visible
+    if (typeof window === "undefined") return;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce) return;
+    const mobile = window.matchMedia("(max-width: 768px)").matches;
+    const tilt = mobile ? 8 : 14;
+    const lift = mobile ? 28 : 44;
+    const stops: Array<() => void> = [];
+    const seen = new Set<Element>();
+    const below = (el: Element) => el.getBoundingClientRect().top >= window.innerHeight * 0.95;
+    const sel = "main section:not(:first-child) :is(h1,h2,h3,p,img,a.inline-flex,button), main section:not(:first-child) .grid > *, main [data-reveal]";
+    const els = Array.from(document.querySelectorAll<HTMLElement>(sel)).filter((el) => {
+      if (seen.has(el) || !below(el)) return false;
+      // skip elements nested inside a card that animates as a whole
+      if (el.closest(".grid > *") && !el.parentElement?.classList.contains("grid")) return false;
+      seen.add(el);
+      return true;
+    });
+    els.forEach((el) => {
+      const target = el.tagName === "IMG" && el.parentElement ? el.parentElement : el;
       const parent = el.parentElement;
-      if (parent?.classList.contains("grid")) {
-        const idx = Array.from(parent.children).indexOf(el);
-        el.style.transitionDelay = `${Math.min(idx, 6) * 110}ms`;
-      }
-      const variants = ["", "rv-left", "rv-depth", "rv-right", "rv-flip"];
-      const sec = el.closest("section");
-      const secIdx = sec ? Array.from(document.querySelectorAll("main section")).indexOf(sec) : 0;
-      let v = variants[secIdx % variants.length] ?? "";
-      if (parent?.classList.contains("grid")) {
-        const idx = Array.from(parent.children).indexOf(el);
-        // alternate within grids: two-column blocks come from opposite sides
-        if (parent.children.length === 2) v = idx === 0 ? "rv-left" : "rv-right";
-        else if (secIdx % 2) v = idx % 2 ? "rv-flip" : "";
-      }
-      el.classList.add("reveal");
-      if (v) el.classList.add(v);
-      io.observe(el);
+      const idx = parent ? Array.from(parent.children).indexOf(el) : 0;
+      const delay = Math.min(Math.max(idx, 0), 6) * 0.1;
+      target.style.opacity = "0";
+      target.style.transform = `perspective(1200px) translateY(${lift}px) rotateX(${tilt}deg)`;
+      target.style.transformOrigin = "50% 100%";
+      target.style.willChange = "transform, opacity";
+      const stop = inView(
+        target,
+        () => {
+          animate(
+            target,
+            { opacity: [0, 1], transform: [target.style.transform, "perspective(1200px) translateY(0px) rotateX(0deg)"] },
+            { duration: 0.75, delay, ease: [0.16, 1, 0.3, 1] },
+          ).then(() => {
+            target.style.transform = "";
+            target.style.willChange = "";
+          });
+        },
+        { amount: 0.15, margin: "0px 0px -40px 0px" },
+      );
+      stops.push(stop);
     });
-    // Word-by-word headings
-    document.querySelectorAll<HTMLElement>("main section:not(:first-child) h2").forEach((h) => {
-      if (!below(h) || h.dataset["split"]) return;
-      h.dataset["split"] = "1";
-      const words = (h.textContent ?? "").split(/\s+/).filter(Boolean);
-      h.textContent = "";
-      words.forEach((w, i) => {
-        const s = document.createElement("span");
-        s.className = "rw";
-        s.textContent = w;
-        s.style.transitionDelay = `${150 + i * 70}ms`;
-        h.appendChild(s);
-        h.appendChild(document.createTextNode(" "));
+
+    // Subtle 3D hover tilt + lift on cards and images (pointer devices only)
+    if (window.matchMedia("(pointer: fine)").matches) {
+      const hoverEls = document.querySelectorAll<HTMLElement>("main .grid > *, main img");
+      hoverEls.forEach((raw) => {
+        const c = raw.tagName === "IMG" && raw.parentElement ? raw.parentElement : raw;
+        const move = (e: PointerEvent) => {
+          const r = c.getBoundingClientRect();
+          const x = (e.clientX - r.left) / r.width - 0.5;
+          const y = (e.clientY - r.top) / r.height - 0.5;
+          c.classList.add("tilt3d");
+          c.style.transform = `perspective(900px) rotateX(${-y * 8}deg) rotateY(${x * 10}deg) translateY(-6px)`;
+        };
+        const leave = () => { c.style.transform = ""; c.classList.remove("tilt3d"); };
+        c.addEventListener("pointermove", move);
+        c.addEventListener("pointerleave", leave);
+        stops.push(() => { c.removeEventListener("pointermove", move); c.removeEventListener("pointerleave", leave); });
       });
-      h.classList.add("reveal-words");
-      io.observe(h);
+    }
+    return () => stops.forEach((f) => f());
+  }, [key]);
+}
+
+function useParallax(key: string) {
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const strength = window.matchMedia("(max-width: 768px)").matches ? 0.06 : 0.12;
+    const layers = Array.from(document.querySelectorAll<HTMLElement>("main section:first-child > .pointer-events-none, main [data-parallax]"));
+    const hero = document.querySelector<HTMLElement>("main section:first-child .container-x");
+    return scroll((progress: number, info: { y: { current: number } }) => {
+      const y = info.y.current;
+      layers.forEach((l, i) => { l.style.translate = `0 ${y * strength * (i % 2 ? -1 : 1) * 2}px`; });
+      if (hero && y < window.innerHeight * 1.2) hero.style.translate = `0 ${y * strength}px`;
+      void progress;
     });
-    // Image unveil
-    document.querySelectorAll<HTMLElement>("main img").forEach((img) => {
-      const box = img.parentElement;
-      if (!box || !below(box) || box.classList.contains("reveal-img")) return;
-      box.classList.add("reveal-img");
-      io.observe(box);
-    });
-    // Live 3D tilt following the pointer on cards
-    const fine = window.matchMedia("(pointer: fine) and (prefers-reduced-motion: no-preference)").matches;
-    const cards = fine ? Array.from(document.querySelectorAll<HTMLElement>("main .grid > *")) : [];
-    const offs: Array<() => void> = [];
-    cards.forEach((c) => {
-      const move = (e: PointerEvent) => {
-        if (!c.classList.contains("is-visible") && c.classList.contains("reveal")) return;
-        const r = c.getBoundingClientRect();
-        const x = (e.clientX - r.left) / r.width - 0.5;
-        const y = (e.clientY - r.top) / r.height - 0.5;
-        c.classList.add("tilt3d");
-        c.style.transform = `perspective(900px) rotateX(${-y * 10}deg) rotateY(${x * 12}deg) translateZ(10px)`;
-      };
-      const leave = () => { c.style.transform = ""; };
-      c.addEventListener("pointermove", move);
-      c.addEventListener("pointerleave", leave);
-      offs.push(() => { c.removeEventListener("pointermove", move); c.removeEventListener("pointerleave", leave); });
-    });
-    return () => { io.disconnect(); offs.forEach((f) => f()); };
   }, [key]);
 }
 
@@ -204,6 +202,7 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   useScrollReveal(pathname);
+  useParallax(pathname);
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
   }, [pathname]);

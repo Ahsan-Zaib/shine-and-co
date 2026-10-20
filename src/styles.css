@@ -167,7 +167,7 @@
 .menu-item { animation: item-shine .45s cubic-bezier(.2,.7,.2,1) both; }
 
 /* Live 3D tilt on cards (set by JS) */
-.tilt3d { transition: transform .25s ease-out !important; transition-delay: 0s !important; transform-style: preserve-3d; }
+.tilt3d { box-shadow: var(--shadow-lift); transition: transform .3s ease-out, box-shadow .3s ease-out !important; transition-delay: 0s !important; transform-style: preserve-3d; }
 
 /* Varied reveal directions so scrolling never feels repetitive */
 .reveal.rv-left { transform: perspective(1400px) translateX(-60px) rotateY(16deg) scale(.96); transform-origin: 0% 50%; }
