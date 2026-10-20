@@ -167,7 +167,25 @@ function useScrollReveal(key: string) {
       box.classList.add("reveal-img");
       io.observe(box);
     });
-    return () => io.disconnect();
+    // Live 3D tilt following the pointer on cards
+    const fine = window.matchMedia("(pointer: fine) and (prefers-reduced-motion: no-preference)").matches;
+    const cards = fine ? Array.from(document.querySelectorAll<HTMLElement>("main .grid > *")) : [];
+    const offs: Array<() => void> = [];
+    cards.forEach((c) => {
+      const move = (e: PointerEvent) => {
+        if (!c.classList.contains("is-visible") && c.classList.contains("reveal")) return;
+        const r = c.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width - 0.5;
+        const y = (e.clientY - r.top) / r.height - 0.5;
+        c.classList.add("tilt3d");
+        c.style.transform = `perspective(900px) rotateX(${-y * 10}deg) rotateY(${x * 12}deg) translateZ(10px)`;
+      };
+      const leave = () => { c.style.transform = ""; };
+      c.addEventListener("pointermove", move);
+      c.addEventListener("pointerleave", leave);
+      offs.push(() => { c.removeEventListener("pointermove", move); c.removeEventListener("pointerleave", leave); });
+    });
+    return () => { io.disconnect(); offs.forEach((f) => f()); };
   }, [key]);
 }
 
