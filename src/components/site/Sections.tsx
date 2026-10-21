@@ -140,7 +140,7 @@ export function Plans() {
               <li key={f} className="flex gap-2"><Check className="h-4 w-4 text-accent" />{f}</li>
             ))}
           </ul>
-          <Button asChild variant={"popular" in p && p.popular ? "hero" : "soft"} className="mt-7 w-full">
+          <Button asChild variant={"popular" in p && p.popular ? "hero" : "soft"} className="mt-7 w-full whitespace-normal leading-snug px-3">
             <Link to="/book" search={{ frequency: p.id }}>Choose {p.name}</Link>
           </Button>
         </div>
